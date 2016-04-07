@@ -17,7 +17,10 @@ public class enemyModel : MonoBehaviour
 	private float damagebuf;
 	private float cd;
 	private float cdbuf;
-
+	public List<Vector3> shadowMovements = new List<Vector3>();
+	public List<Boolean> shadowFiring =  new List<Boolean>();
+	public Boolean firstRun = true;
+	public int shadowitr = 0;
 
 	public void init(int enemyType, int initHealth, Enemy owner) {
 		this.owner = owner;
@@ -58,28 +61,48 @@ public class enemyModel : MonoBehaviour
 
 	void Update(){
 		clock += Time.deltaTime;
-		if (enemyType == 2) {
-			if (movex > 0) {
-				transform.position = new Vector3 (transform.position.x + speed * Mathf.Sqrt (3) / 2, transform.position.y - speed / 2, 0);
-			} else if (movex < 0) {
-				transform.position = new Vector3 (transform.position.x - speed * Mathf.Sqrt (3) / 2, transform.position.y - speed/ 2, 0);
-			} else if (movey > 0) {
-				transform.position = new Vector3 (transform.position.x, transform.position.y + speed, 0);
-			} else if (movey < 0) {
-				transform.position = new Vector3 (transform.position.x + speed / 2, transform.position.y - speed * Mathf.Sqrt (3) / 2, 0);
+		if (firstRun) {
+			shadowMovements.Add (this.transform.localPosition);
+			if (Input.GetKeyDown (KeyCode.Space)) {
+				shadowFiring.Add (true);
+			} else {
+				shadowFiring.Add (false);
 			}
-		} else if (enemyType == 1) {
-			transform.position = new Vector3 (transform.position.x + speed * movex, transform.position.y + speed * movey);
-		} else if (enemyType == 3) {
-			transform.position = new Vector3 (transform.position.x + speed * movex, transform.position.y + speed * movey);
-		}
-		movex = 0;
-		movey = 0;
-		if (clock - damagebuf > 3) {
-			damage();
-			damagebuf = clock;
-		}
+		
+			if (enemyType == 2) {
+				if (movex > 0) {
+					transform.position = new Vector3 (transform.position.x + speed * Mathf.Sqrt (3) / 2, transform.position.y - speed / 2, 0);
+				} else if (movex < 0) {
+					transform.position = new Vector3 (transform.position.x - speed * Mathf.Sqrt (3) / 2, transform.position.y - speed / 2, 0);
+				} else if (movey > 0) {
+					transform.position = new Vector3 (transform.position.x, transform.position.y + speed, 0);
+				} else if (movey < 0) {
+					transform.position = new Vector3 (transform.position.x + speed / 2, transform.position.y - speed * Mathf.Sqrt (3) / 2, 0);
+				}
+			} else if (enemyType == 1) {
+				transform.position = new Vector3 (transform.position.x + speed * movex, transform.position.y + speed * movey);
+			} else if (enemyType == 3) {
+				transform.position = new Vector3 (transform.position.x + speed * movex, transform.position.y + speed * movey);
+			}
+			movex = 0;
+			movey = 0;
+			if (clock - damagebuf > 3) {
+				damage ();
+				damagebuf = clock;
+			}
+		} else {
+			if (shadowitr >= shadowMovements.Count) {
+				shadowitr = 0;
+			}
+			//this.mat.shader = Shader.Find("Transparent/Diffuse");
+			if (shadowFiring [shadowitr] == true) {
+				this.shoot ();
+			}
+			this.transform.localPosition = shadowMovements [shadowitr];
+			shadowitr++;
 
+		
+		}
 	}
 
 	void OnGUI(){
@@ -123,7 +146,7 @@ public class enemyModel : MonoBehaviour
 	}
 
 	public void destroy(){
-		DestroyImmediate (gameObject);
+		firstRun = false;
 	}
 
 	public int getType(){

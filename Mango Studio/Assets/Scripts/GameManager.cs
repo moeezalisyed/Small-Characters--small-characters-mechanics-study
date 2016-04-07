@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
 	private int shadowiterator;
 	private Boolean startitr;
 
+
     // Level number
 
     private int level = 99;
@@ -59,9 +60,9 @@ public class GameManager : MonoBehaviour
 		enemies = new List<Enemy> ();
 		enemytype = 1;
 		addEnemy(0, 1, 0, 0);
+		//addEnemy(enemytype, 1, -4, -4);
 		addEnemy(enemytype, 1, -4, -4);
-		addEnemy(enemytype, 1, -4, -4);
-		currentenemy = enemies [2];
+		currentenemy = enemies [1];
 		currentenemy.setCD (0.8f);
 		setHealthText ();
 		clock = 0f;
@@ -75,8 +76,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 		clock += Time.deltaTime;
-
-		shadow.Add (currentenemy.model.transform.localPosition);
+	//	shadow.Add (currentenemy.model.transform.localPosition);
 		if (Input.GetKey (KeyCode.RightArrow) && currentenemy.transform.position.x < 3) {
 			currentenemy.move(1, 0);
 		} 
@@ -96,26 +96,26 @@ public class GameManager : MonoBehaviour
 		if (currentenemy.getHealth () == 0) {
 			currentenemy.destroy();
 			enemies.Remove(currentenemy);
-			startitr = true;
+			//startitr = true;
 
 			if (enemytype < 4) {
 				enemytype++;
 			}
 			addEnemy (enemytype, 1, -4, -4);
-			currentenemy = enemies [2];
+			currentenemy = enemies [1];
 			if (enemytype == 3) {
 				currentenemy.setCD (1.0f);
 			}
 		}
-		if (startitr){
-			
-
-
-			print ("we got here!" + shadow[0]);
-
-			enemies [1].model.transform.localPosition = shadow [shadowiterator];
-			shadowiterator++;
-			}
+//		if (startitr){
+//			
+//
+//
+//			print ("we got here!" + shadow[0]);
+//
+//			enemies [1].model.transform.localPosition = shadow [shadowiterator];
+//			shadowiterator++;
+//			}
     }
 
 	public void addEnemy(int enemyType, int initHealth, int x, int y)
