@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class Enemy : MonoBehaviour {
 
-	private enemyModel model;		// The model object.
+	public enemyModel model;		// The model object.
 	private int enemyType;
 	private int initHealth;
 	public float enemyx;
@@ -42,6 +42,14 @@ public class Enemy : MonoBehaviour {
 
 	public void shoot(){
 		model.shoot ();
+	}
+
+	public void setCD(float a){
+		model.setCD (a);
+	}
+
+	public int getType(){
+		return model.getType();
 	}
 }
 

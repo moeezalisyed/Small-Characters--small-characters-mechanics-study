@@ -22,6 +22,9 @@ public class GameManager : MonoBehaviour
     int enemynum = 0;
 	private int enemytype;
 	public Text HealthText;
+	private List<Vector3> shadow;
+	private int shadowiterator;
+	private Boolean startitr;
 
     // Level number
 
@@ -57,39 +60,62 @@ public class GameManager : MonoBehaviour
 		enemytype = 1;
 		addEnemy(0, 1, 0, 0);
 		addEnemy(enemytype, 1, -4, -4);
-		currentenemy = enemies [1];
+		addEnemy(enemytype, 1, -4, -4);
+		currentenemy = enemies [2];
+		currentenemy.setCD (0.8f);
 		setHealthText ();
+		clock = 0f;
+		shadow = new List<Vector3> ();
+		shadowiterator = 0;
+		startitr = false;
 
 	}
         
     // Update is called once per frame
     void Update()
     {
-		if (Input.GetKey (KeyCode.D) && currentenemy.transform.position.x < 3) {
+		clock += Time.deltaTime;
+
+		shadow.Add (currentenemy.model.transform.localPosition);
+		if (Input.GetKey (KeyCode.RightArrow) && currentenemy.transform.position.x < 3) {
 			currentenemy.move(1, 0);
 		} 
-		if (Input.GetKey (KeyCode.W) && currentenemy.transform.position.y < 3) {
+		if (Input.GetKey (KeyCode.UpArrow) && currentenemy.transform.position.y < 3) {
 			currentenemy.move(0, 1);
 		}
-		if (Input.GetKey (KeyCode.A) && currentenemy.transform.position.x > -8){
+		if (Input.GetKey (KeyCode.LeftArrow) && currentenemy.transform.position.x > -8){
 			currentenemy.move(-1, 0);
 		}
-		if (Input.GetKey (KeyCode.S) && currentenemy.transform.position.y > -8) {
+		if (Input.GetKey (KeyCode.DownArrow) && currentenemy.transform.position.y > -8) {
 			currentenemy.move(0, -1);
 		}
-		if (Input.GetKey (KeyCode.Space)) {
+		if (Input.GetKeyDown (KeyCode.Space)) {
 			currentenemy.shoot();
 		}
 		setHealthText ();
 		if (currentenemy.getHealth () == 0) {
 			currentenemy.destroy();
 			enemies.Remove(currentenemy);
-			if (enemytype < 5) {
+			startitr = true;
+
+			if (enemytype < 4) {
 				enemytype++;
 			}
 			addEnemy (enemytype, 1, -4, -4);
-			currentenemy = enemies [1];
+			currentenemy = enemies [2];
+			if (enemytype == 3) {
+				currentenemy.setCD (1.0f);
+			}
 		}
+		if (startitr){
+			
+
+
+			print ("we got here!" + shadow[0]);
+
+			enemies [1].model.transform.localPosition = shadow [shadowiterator];
+			shadowiterator++;
+			}
     }
 
 	public void addEnemy(int enemyType, int initHealth, int x, int y)
@@ -107,5 +133,7 @@ public class GameManager : MonoBehaviour
 	void setHealthText (){
 		HealthText.text = "Health: "+currentenemy.getHealth();
 	}
+
+
 
 }
